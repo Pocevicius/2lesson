@@ -29,13 +29,24 @@ module.exports.INSERT_TASK = function (req, res) {
 };
 
 module.exports.EDIT_TASK = (req, res) => {
-  const index = tasks.findIndex((task) => task.id === req.params.id);
+  taskSchema
+    .updateOne({ _id: req.params.id }, { task: req.body.editedTask })
+    .then((result) => {
+      return res
+        .status(200)
+        .json({ statusMessage: "Edited successfully", editedTask: result });
+    });
+};
 
-  tasks[index].task = req.body.editedTask;
-
-  console.log("task", tasks);
-
-  res.status(200).json({ statusMessage: "Eddited successfully" });
+module.exports.CHANGE_TASK_STATUS = async (req, res) => {
+  const currentTaskData = await taskSchema
+    .findOne({ _id: req.params.id })
+    .exec();
+  taskSchema
+    .updateOne({ _id: req.params.id }, { isDone: !currentTaskData.isDone })
+    .then((result) => {
+      return res.status(200).json({ statusMessage: "Edited successfully" });
+    });
 };
 
 module.exports.DELETE_TASK = function (req, res) {

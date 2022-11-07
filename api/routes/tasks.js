@@ -10,6 +10,8 @@ router.post("/insertTask", tasksController.INSERT_TASK);
 
 router.put("/editTask/:id", tasksController.EDIT_TASK);
 
+router.put("/changedTaskStatus/:id", tasksController.CHANGE_TASK_STATUS);
+
 router.delete("/deleteTask/:id", tasksController.DELETE_TASK);
 
 module.exports = router;
