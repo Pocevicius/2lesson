@@ -1,19 +1,31 @@
-const tasks = [];
+const taskSchema = require("../models/taskModel");
+
+// const tasks = [];
 
 module.exports.GET_TASKS = function (req, res) {
-  console.log(req.body);
-  res.status(200).json({ tasks: tasks });
+  taskSchema.find().then((results) => {
+    return res.status(200).json({ tasks: results });
+  });
+};
+
+module.exports.GET_TASK = function (req, res) {
+  taskSchema.findOne({ _id: req.params.id }).then((results) => {
+    return res.status(200).json({ tasks: results });
+  });
 };
 
 module.exports.INSERT_TASK = function (req, res) {
-  console.log(req.body);
-  tasks.push({
-    id: req.body.id,
+  const task = new taskSchema({
     task: req.body.task,
     isDone: req.body.isDone,
   });
 
-  res.status(200).json({ statusMessage: "task was inserted successfully" });
+  task.save().then((result) => {
+    return res.status(200).json({
+      statusMessage: "task was inserted successfully",
+      result: result,
+    });
+  });
 };
 
 module.exports.EDIT_TASK = (req, res) => {
@@ -27,11 +39,10 @@ module.exports.EDIT_TASK = (req, res) => {
 };
 
 module.exports.DELETE_TASK = function (req, res) {
-  const index = tasks.findIndex((task) => task.id === req.params.id);
-
-  const deletedValue = tasks.splice(index, 1);
-
-  console.log("task", tasks);
-
-  res.status(200).json({ deletedItem: deletedValue });
+  taskSchema.deleteOne({ _id: req.params.id }).then((results) => {
+    res.status(200).json({
+      statusMessage: "Item was deleted successfully",
+      deletedItem: results,
+    });
+  });
 };
